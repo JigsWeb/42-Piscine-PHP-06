@@ -108,11 +108,18 @@ class Matrix {
         return $this;
     }
 
+    function transformVertex(Vertex $vtx) {
+        $x = $this->_vtcX->x * $vtx->x + $this->_vtcY->x * $vtx->y + $this->_vtcZ->x * $vtx->z + $this->_vtx0->x * $vtx->w;
+        $y = $this->_vtcX->y * $vtx->x + $this->_vtcY->y * $vtx->y + $this->_vtcZ->y * $vtx->z + $this->_vtx0->y * $vtx->w;
+        $z = $this->_vtcX->z * $vtx->x + $this->_vtcY->z * $vtx->y + $this->_vtcZ->z * $vtx->z + $this->_vtx0->z * $vtx->w;
+        $w = $this->_vtcX->w * $vtx->x + $this->_vtcY->w * $vtx->y + $this->_vtcZ->w * $vtx->z + $this->_vtx0->w * $vtx->w;
+
+        return new Vertex(compact('x', 'y', 'z', 'w'));
+    }
+
     function __get($name) {
-        // var_dump($name." GET\n");
-        if (in_array($name, ['_vtcX','_vtcY','_vtcZ','_vtx0'])){
+        if (in_array($name, ['_vtcX','_vtcY','_vtcZ','_vtx0']))
             return $this->$name;
-        }
     }
 
     private function _construct_message($preset) {
@@ -178,10 +185,10 @@ print( 'Please note the reverse operations order. It\'s not an error.' . PHP_EOL
 $M = $T->mult( $RX )->mult( $RY )->mult( $S );
 print( $M . PHP_EOL . PHP_EOL );
 
-// print( 'What can you do with a matrix and a vertex ?' . PHP_EOL );
-// $vtxA = new Vertex( array( 'x' => 1.0, 'y' => 1.0, 'z' => 0.0 ) );
-// print( $vtxA . PHP_EOL );
-// print( $M . PHP_EOL );
-// print( 'Transform the damn vertex !' . PHP_EOL );
-// $vtxB = $M->transformVertex( $vtxA );
-// print( $vtxB . PHP_EOL . PHP_EOL );
+print( 'What can you do with a matrix and a vertex ?' . PHP_EOL );
+$vtxA = new Vertex( array( 'x' => 1.0, 'y' => 1.0, 'z' => 0.0 ) );
+print( $vtxA . PHP_EOL );
+print( $M . PHP_EOL );
+print( 'Transform the damn vertex !' . PHP_EOL );
+$vtxB = $M->transformVertex( $vtxA );
+print( $vtxB . PHP_EOL . PHP_EOL );
