@@ -16,6 +16,10 @@ class Matrix {
     private $_vtcZ;
     private $_vtx0;
 
+    static function doc() {
+        return file_get_contents('Matrix.doc.txt');
+    }
+
     function __construct($params = []) {
         $this->$params['preset']($params);
     }

@@ -1,0 +1,27 @@
+<- Matrix ----------------------------------------------------------------------
+This class is a helper for create matrix, and some methods is attach to instance.
+
+[*$preset] Needed params for a given matrix type
+
+Params:
+	=> ’preset’ : Matrix type.
+		CONST[IDENTITY, SCALE, RX, RY, RZ, TRANSLATION et PROJECTION]
+	=> ’scale’ : Scale factor [*SCALE].
+		Number
+	=> ’angle’ : Radians rotation angle [*RX, RY, RZ].
+		Number
+	=> ’vtc’ : Translation Vector [*TRANSLATION].
+		Vector
+	=> ’fov’ : Field of view [*PROJECTION].
+	=> ’ratio’ : Image ratio [*PROJECTION].
+		Number
+	=> ’near’ : Clipping near projection [*PROJECTION].
+		Number
+	=> ’far’ : Clipping far projection [*PROJECTION].
+		Number
+
+Instance methods:
+	=> Matrix mult( Matrix $rhs ) : Product of two matrix.
+	=> Vertex transformVertex( Vertex $vtx ) : Vertex transform by matrix.
+
+---------------------------------------------------------------------- Matrix ->
