@@ -4,7 +4,8 @@ require_once('Vector.class.php');
 
 class Matrix {
     static $verbose = false;
-    const   IDENTITY    = '_identity',
+    const   CUSTOM      = '_custom',
+            IDENTITY    = '_identity',
             SCALE       = '_scale',
             RX          = '_rotation_x',
             RY          = '_rotation_y',
@@ -22,6 +23,14 @@ class Matrix {
 
     function __construct($params = []) {
         $this->$params['preset']($params);
+    }
+
+    // @TODO
+    private function _custom($params) {
+        $this->_vtcX = $params['vtcX'];
+        $this->_vtcY = $params['vtcY'];
+        $this->_vtcZ = $params['vtcZ'];
+        $this->_vtx0 = $params['vtx0'];
     }
 
     private function _identity($params) {
@@ -89,27 +98,30 @@ class Matrix {
         $Xx = $this->_vtcX->x * $rhs->_vtcX->x + $this->_vtcY->x * $rhs->_vtcX->y + $this->_vtcZ->x * $rhs->_vtcX->z + $this->_vtx0->x * $rhs->_vtcX->w;
         $Xy = $this->_vtcX->y * $rhs->_vtcX->x + $this->_vtcY->y * $rhs->_vtcX->y + $this->_vtcZ->y * $rhs->_vtcX->z + $this->_vtx0->y * $rhs->_vtcX->w;
         $Xz = $this->_vtcX->z * $rhs->_vtcX->x + $this->_vtcY->z * $rhs->_vtcX->y + $this->_vtcZ->z * $rhs->_vtcX->z + $this->_vtx0->z * $rhs->_vtcX->w;
+        $Xw = $this->_vtcX->w * $rhs->_vtcX->x + $this->_vtcY->w * $rhs->_vtcX->y + $this->_vtcZ->w * $rhs->_vtcX->z + $this->_vtx0->w * $rhs->_vtcX->w;
 
         $Yx = $this->_vtcX->x * $rhs->_vtcY->x + $this->_vtcY->x * $rhs->_vtcY->y + $this->_vtcZ->x * $rhs->_vtcY->z + $this->_vtx0->x * $rhs->_vtcY->w;
         $Yy = $this->_vtcX->y * $rhs->_vtcY->x + $this->_vtcY->y * $rhs->_vtcY->y + $this->_vtcZ->y * $rhs->_vtcY->z + $this->_vtx0->y * $rhs->_vtcY->w;
         $Yz = $this->_vtcX->z * $rhs->_vtcY->x + $this->_vtcY->z * $rhs->_vtcY->y + $this->_vtcZ->z * $rhs->_vtcY->z + $this->_vtx0->z * $rhs->_vtcY->w;
+        $Yw = $this->_vtcX->w * $rhs->_vtcY->x + $this->_vtcY->w * $rhs->_vtcY->y + $this->_vtcZ->w * $rhs->_vtcY->z + $this->_vtx0->w * $rhs->_vtcY->w;
 
         $Zx = $this->_vtcX->x * $rhs->_vtcZ->x + $this->_vtcY->x * $rhs->_vtcZ->y + $this->_vtcZ->x * $rhs->_vtcZ->z + $this->_vtx0->x * $rhs->_vtcZ->w;
         $Zy = $this->_vtcX->y * $rhs->_vtcZ->x + $this->_vtcY->y * $rhs->_vtcZ->y + $this->_vtcZ->y * $rhs->_vtcZ->z + $this->_vtx0->y * $rhs->_vtcZ->w;
         $Zz = $this->_vtcX->z * $rhs->_vtcZ->x + $this->_vtcY->z * $rhs->_vtcZ->y + $this->_vtcZ->z * $rhs->_vtcZ->z + $this->_vtx0->z * $rhs->_vtcZ->w;
+        $Zw = $this->_vtcX->w * $rhs->_vtcZ->x + $this->_vtcY->w * $rhs->_vtcZ->y + $this->_vtcZ->w * $rhs->_vtcZ->z + $this->_vtx0->w * $rhs->_vtcZ->w;
 
-        $this->_vtcX->x = $Xx;
-        $this->_vtcX->y = $Xy;
-        $this->_vtcX->z = $Xz;
+        $Wx = $this->_vtcX->x * $rhs->_vtx0->x + $this->_vtcY->x * $rhs->_vtx0->y + $this->_vtcZ->x * $rhs->_vtx0->z + $this->_vtx0->x * $rhs->_vtx0->w;
+        $Wy = $this->_vtcX->y * $rhs->_vtx0->x + $this->_vtcY->y * $rhs->_vtx0->y + $this->_vtcZ->y * $rhs->_vtx0->z + $this->_vtx0->y * $rhs->_vtx0->w;
+        $Wz = $this->_vtcX->z * $rhs->_vtx0->x + $this->_vtcY->z * $rhs->_vtx0->y + $this->_vtcZ->z * $rhs->_vtx0->z + $this->_vtx0->z * $rhs->_vtx0->w;
+        $Ww = $this->_vtcX->w * $rhs->_vtx0->x + $this->_vtcY->w * $rhs->_vtx0->y + $this->_vtcZ->w * $rhs->_vtx0->z + $this->_vtx0->w * $rhs->_vtx0->w;
 
-        $this->_vtcY->x = $Yx;
-        $this->_vtcY->y = $Yy;
-        $this->_vtcY->z = $Yz;
-
-        $this->_vtcZ->x = $Zx;
-        $this->_vtcZ->y = $Zy;
-        $this->_vtcZ->z = $Zz;
-        return $this;
+        return new Matrix([
+            'preset' => self::CUSTOM,
+            'vtcX' => new Vector(['dest' => new Vertex(['x' => $Xx, 'y' => $Xy, 'z' => $Xz, 'w' => $Xw + 1])]),
+            'vtcY' => new Vector(['dest' => new Vertex(['x' => $Yx, 'y' => $Yy, 'z' => $Yz, 'w' => $Yw + 1])]),
+            'vtcZ' => new Vector(['dest' => new Vertex(['x' => $Zx, 'y' => $Zy, 'z' => $Zz, 'w' => $Zw + 1])]),
+            'vtx0' => new Vertex(['x' => $Wx, 'y' => $Wy, 'z' => $Wz, 'w' => $Ww])
+        ]);
     }
 
     function transformVertex(Vertex $vtx) {
@@ -120,15 +132,20 @@ class Matrix {
 
         return new Vertex(compact('x', 'y', 'z', 'w'));
     }
+    
+    private function _construct_message($preset) {
+        if (self::$verbose)
+            echo "Matrix $preset preset instance constructed\n";
+    }
 
     function __get($name) {
         if (in_array($name, ['_vtcX','_vtcY','_vtcZ','_vtx0']))
             return $this->$name;
     }
 
-    private function _construct_message($preset) {
+    function __destruct() {
         if (self::$verbose)
-            echo "Matrix $preset preset instance constructed\n";
+            echo "Matrix instance destructed.\n";
     }
 
     function __toString() {
@@ -141,58 +158,3 @@ class Matrix {
         return $res;
     }
 }
-
-Vertex::$verbose = False;
-Vector::$verbose = False;
-
-Matrix::$verbose = True;
-
-print( 'Let\'s start with an harmless identity matrix :' . PHP_EOL );
-$I = new Matrix( array( 'preset' => Matrix::IDENTITY ) );
-print( $I . PHP_EOL . PHP_EOL );
-
-print( 'So far, so good. Let\'s create a translation matrix now.' . PHP_EOL );
-$vtx = new Vertex( array( 'x' => 20.0, 'y' => 20.0, 'z' => 0.0 ) );
-$vtc = new Vector( array( 'dest' => $vtx ) );
-$T  = new Matrix( array( 'preset' => Matrix::TRANSLATION, 'vtc' => $vtc ) );
-print( $T . PHP_EOL . PHP_EOL );
-
-print( 'A scale matrix is no big deal.' . PHP_EOL );
-$S  = new Matrix( array( 'preset' => Matrix::SCALE, 'scale' => 10.0 ) );
-print( $S . PHP_EOL . PHP_EOL );
-
-print( 'A Rotation along the OX axis :' . PHP_EOL );
-$RX = new Matrix( array( 'preset' => Matrix::RX, 'angle' => M_PI_4 ) );
-print( $RX . PHP_EOL . PHP_EOL );
-
-print( 'Or along the OY axis :' . PHP_EOL );
-$RY = new Matrix( array( 'preset' => Matrix::RY, 'angle' => M_PI_2 ) );
-print( $RY . PHP_EOL . PHP_EOL );
-
-print( 'Do a barrel roll !' . PHP_EOL );
-$RZ = new Matrix( array( 'preset' => Matrix::RZ, 'angle' => 2 * M_PI ) );
-print( $RZ . PHP_EOL . PHP_EOL );
-
-print( 'The bad guy now, the projection matrix : 3D to 2D !' . PHP_EOL );
-print( 'The values are arbitray. We\'ll decipher them in the next exercice.' . PHP_EOL );
-$P = new Matrix( array( 'preset' => Matrix::PROJECTION,
-						'fov' => 60,
-						'ratio' => 640/480,
-						'near' => 1.0,
-						'far' => -50.0 ) );
-print( $P . PHP_EOL . PHP_EOL );
-
-print( 'Matrices are so awesome, that they can be combined !' . PHP_EOL );
-print( 'This is a model matrix that scales, then rotates around OY axis,' . PHP_EOL );
-print( 'then rotates around OX axis and finally translates.' . PHP_EOL );
-print( 'Please note the reverse operations order. It\'s not an error.' . PHP_EOL );
-$M = $T->mult( $RX )->mult( $RY )->mult( $S );
-print( $M . PHP_EOL . PHP_EOL );
-
-print( 'What can you do with a matrix and a vertex ?' . PHP_EOL );
-$vtxA = new Vertex( array( 'x' => 1.0, 'y' => 1.0, 'z' => 0.0 ) );
-print( $vtxA . PHP_EOL );
-print( $M . PHP_EOL );
-print( 'Transform the damn vertex !' . PHP_EOL );
-$vtxB = $M->transformVertex( $vtxA );
-print( $vtxB . PHP_EOL . PHP_EOL );
