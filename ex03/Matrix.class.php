@@ -82,17 +82,17 @@ class Matrix {
     }
 
     function mult(Matrix $rhs) {
-        $Xx = $this->_vtcX->dotProduct($rhs->vtcX);
-        $Xy = $this->_vtcY->dotProduct($rhs->vtcX);
-        $Xz = $this->_vtcZ->dotProduct($rhs->vtcX);
+        $Xx = $this->_vtcX->x * $rhs->_vtcX->x + $this->_vtcY->x * $rhs->_vtcX->y + $this->_vtcZ->x * $rhs->_vtcX->z + $this->_vtx0->x * $rhs->_vtcX->w;
+        $Xy = $this->_vtcX->y * $rhs->_vtcX->x + $this->_vtcY->y * $rhs->_vtcX->y + $this->_vtcZ->y * $rhs->_vtcX->z + $this->_vtx0->y * $rhs->_vtcX->w;
+        $Xz = $this->_vtcX->z * $rhs->_vtcX->x + $this->_vtcY->z * $rhs->_vtcX->y + $this->_vtcZ->z * $rhs->_vtcX->z + $this->_vtx0->z * $rhs->_vtcX->w;
 
-        $Yx = $this->_vtcX->dotProduct($rhs->vtcY);
-        $Yy = $this->_vtcY->dotProduct($rhs->vtcY);
-        $Yz = $this->_vtcZ->dotProduct($rhs->vtcY);
+        $Yx = $this->_vtcX->x * $rhs->_vtcY->x + $this->_vtcY->x * $rhs->_vtcY->y + $this->_vtcZ->x * $rhs->_vtcY->z + $this->_vtx0->x * $rhs->_vtcY->w;
+        $Yy = $this->_vtcX->y * $rhs->_vtcY->x + $this->_vtcY->y * $rhs->_vtcY->y + $this->_vtcZ->y * $rhs->_vtcY->z + $this->_vtx0->y * $rhs->_vtcY->w;
+        $Yz = $this->_vtcX->z * $rhs->_vtcY->x + $this->_vtcY->z * $rhs->_vtcY->y + $this->_vtcZ->z * $rhs->_vtcY->z + $this->_vtx0->z * $rhs->_vtcY->w;
 
-        $Zx = $this->_vtcX->dotProduct($rhs->vtcZ);
-        $Zy = $this->_vtcY->dotProduct($rhs->vtcZ);
-        $Zz = $this->_vtcZ->dotProduct($rhs->vtcZ);
+        $Zx = $this->_vtcX->x * $rhs->_vtcZ->x + $this->_vtcY->x * $rhs->_vtcZ->y + $this->_vtcZ->x * $rhs->_vtcZ->z + $this->_vtx0->x * $rhs->_vtcZ->w;
+        $Zy = $this->_vtcX->y * $rhs->_vtcZ->x + $this->_vtcY->y * $rhs->_vtcZ->y + $this->_vtcZ->y * $rhs->_vtcZ->z + $this->_vtx0->y * $rhs->_vtcZ->w;
+        $Zz = $this->_vtcX->z * $rhs->_vtcZ->x + $this->_vtcY->z * $rhs->_vtcZ->y + $this->_vtcZ->z * $rhs->_vtcZ->z + $this->_vtx0->z * $rhs->_vtcZ->w;
 
         $this->_vtcX->x = $Xx;
         $this->_vtcX->y = $Xy;
@@ -109,8 +109,10 @@ class Matrix {
     }
 
     function __get($name) {
-        if (in_array($name, ['vtcX','vtcY','vtcZ','vtx0']))
-            return $this->{"_$name"};
+        // var_dump($name." GET\n");
+        if (in_array($name, ['_vtcX','_vtcY','_vtcZ','_vtx0'])){
+            return $this->$name;
+        }
     }
 
     private function _construct_message($preset) {
