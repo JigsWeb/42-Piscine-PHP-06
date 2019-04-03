@@ -7,7 +7,7 @@ class Color {
     public $blue;
 
     static function doc() {
-        return file_get_contents('Color.doc.txt');
+        return "\n".file_get_contents('Color.doc.txt');
     }
 
     function __construct($arr) {

@@ -27,7 +27,7 @@ Class Vertex {
 
     function __destruct() {
         if (self::$verbose)
-            echo $this." destructed.\n";
+            echo $this." destructed\n";
     }
 
     function __toString() {

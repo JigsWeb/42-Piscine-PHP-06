@@ -16,7 +16,7 @@ Class Vector {
         $this->_x = $dest->x - $orig->x;
         $this->_y = $dest->y - $orig->y;
         $this->_z = $dest->z - $orig->z;
-        $this->_w = $dest->w - $orig->w;
+        $this->_w = $dest->w !== 1.0 ? $dest->w : 0;
 
         if (self::$verbose)
             echo $this." constructed\n";
@@ -28,11 +28,11 @@ Class Vector {
 
     function __destruct() {
         if (self::$verbose)
-            echo $this." destructed.\n";
+            echo $this." destructed\n";
     }
 
     function __toString() {
-        return "Vector( x: ".sprintf("%.2f", $this->_x).", y: ".sprintf("%.2f", $this->_y).", z:".sprintf("%.2f", $this->_z).", w:".sprintf("%.2f", $this->_w)." )";
+        return "Vector( x:".sprintf("%.2f", $this->_x).", y:".sprintf("%.2f", $this->_y).", z:".sprintf("%.2f", $this->_z).", w:".sprintf("%.2f", $this->_w)." )";
     }
 
     function __get($name) {

@@ -38,7 +38,9 @@ class Matrix {
         $this->_vtcY = new Vector(['dest' => new Vertex(['x' => 0, 'y' => 1, 'z' => 0])]);
         $this->_vtcZ = new Vector(['dest' => new Vertex(['x' => 0, 'y' => 0, 'z' => 1])]);
         $this->_vtx0 = new Vertex(['x' => 0, 'y' => 0, 'z' => 0]);
-        $this->_construct_message('IDENTITY');
+        
+        if (self::$verbose)
+            echo "Matrix IDENTITY instance constructed\n";
     }
 
     private function _scale($params) {
@@ -54,7 +56,7 @@ class Matrix {
         $this->_vtcY = new Vector(['dest' => new Vertex(['x' => 0, 'y' => cos($params['angle']), 'z' => sin($params['angle'])])]);
         $this->_vtcZ = new Vector(['dest' => new Vertex(['x' => 0, 'y' => -sin($params['angle']), 'z' => cos($params['angle'])])]);
         $this->_vtx0 = new Vertex(['x' => 0, 'y' => 0, 'z' => 0]);
-        $this->_construct_message('0x ROTATION');
+        $this->_construct_message('Ox ROTATION');
     }
 
     private function _rotation_y($params) {
@@ -62,7 +64,7 @@ class Matrix {
         $this->_vtcY = new Vector(['dest' => new Vertex(['x' => 0, 'y' => 1, 'z' => 0])]);
         $this->_vtcZ = new Vector(['dest' => new Vertex(['x' => sin($params['angle']), 'y' => 0, 'z' => cos($params['angle'])])]);
         $this->_vtx0 = new Vertex(['x' => 0, 'y' => 0, 'z' => 0]);
-        $this->_construct_message('0y ROTATION');
+        $this->_construct_message('Oy ROTATION');
     }
 
     private function _rotation_z($params) {
@@ -70,7 +72,7 @@ class Matrix {
         $this->_vtcY = new Vector(['dest' => new Vertex(['x' => -sin($params['angle']), 'y' => cos($params['angle']), 'z' => 0])]);
         $this->_vtcZ = new Vector(['dest' => new Vertex(['x' => 0, 'y' => 0, 'z' => 1])]);
         $this->_vtx0 = new Vertex(['x' => 0, 'y' => 0, 'z' => 0]);
-        $this->_construct_message('0z ROTATION');
+        $this->_construct_message('Oz ROTATION');
     }
 
     private function _translation($params) {
@@ -89,8 +91,8 @@ class Matrix {
         $b = -$t; 
         $this->_vtcX = new Vector(['dest' => new Vertex(['x' => 2 * $params['near'] / ($r - $l), 'y' => 0, 'z' => 0])]);
         $this->_vtcY = new Vector(['dest' => new Vertex(['x' => 0, 'y' => 2 * $params['near'] / ($t - $b), 'z' => 0])]);
-        $this->_vtcZ = new Vector(['dest' => new Vertex(['x' => 0, 'y' => 0, 'z' => -(($params['far'] + $params['near']) / ($params['far'] - $params['near'])), 'w' => 0])]);
-        $this->_vtx0 = new Vertex(['x' => 0, 'y' => 0, 'z' => -((2 * $params['far'] * $params['near']) / ($params['far'] - $params['near']))]);
+        $this->_vtcZ = new Vector(['dest' => new Vertex(['x' => 0, 'y' => 0, 'z' => -(($params['far'] + $params['near']) / ($params['far'] - $params['near'])), 'w' => -1])]);
+        $this->_vtx0 = new Vertex(['x' => 0, 'y' => 0, 'z' => -((2 * $params['far'] * $params['near']) / ($params['far'] - $params['near'])), 'w' => 0]);
         $this->_construct_message('PROJECTION');
     }
 
@@ -117,9 +119,9 @@ class Matrix {
 
         return new Matrix([
             'preset' => self::CUSTOM,
-            'vtcX' => new Vector(['dest' => new Vertex(['x' => $Xx, 'y' => $Xy, 'z' => $Xz, 'w' => $Xw + 1])]),
-            'vtcY' => new Vector(['dest' => new Vertex(['x' => $Yx, 'y' => $Yy, 'z' => $Yz, 'w' => $Yw + 1])]),
-            'vtcZ' => new Vector(['dest' => new Vertex(['x' => $Zx, 'y' => $Zy, 'z' => $Zz, 'w' => $Zw + 1])]),
+            'vtcX' => new Vector(['dest' => new Vertex(['x' => $Xx, 'y' => $Xy, 'z' => $Xz, 'w' => $Xw])]),
+            'vtcY' => new Vector(['dest' => new Vertex(['x' => $Yx, 'y' => $Yy, 'z' => $Yz, 'w' => $Yw])]),
+            'vtcZ' => new Vector(['dest' => new Vertex(['x' => $Zx, 'y' => $Zy, 'z' => $Zz, 'w' => $Zw])]),
             'vtx0' => new Vertex(['x' => $Wx, 'y' => $Wy, 'z' => $Wz, 'w' => $Ww])
         ]);
     }
@@ -145,7 +147,7 @@ class Matrix {
 
     function __destruct() {
         if (self::$verbose)
-            echo "Matrix instance destructed.\n";
+            echo "Matrix instance destructed\n";
     }
 
     function __toString() {
@@ -154,7 +156,7 @@ class Matrix {
         $res .= "x | ".sprintf("%.2f", $this->_vtcX->x)." | ".sprintf("%.2f", $this->_vtcY->x)." | ".sprintf("%.2f", $this->_vtcZ->x)." | ".sprintf("%.2f", $this->_vtx0->x)."\n";
         $res .= "y | ".sprintf("%.2f", $this->_vtcX->y)." | ".sprintf("%.2f", $this->_vtcY->y)." | ".sprintf("%.2f", $this->_vtcZ->y)." | ".sprintf("%.2f", $this->_vtx0->y)."\n";
         $res .= "z | ".sprintf("%.2f", $this->_vtcX->z)." | ".sprintf("%.2f", $this->_vtcY->z)." | ".sprintf("%.2f", $this->_vtcZ->z)." | ".sprintf("%.2f", $this->_vtx0->z)."\n";
-        $res .= "w | ".sprintf("%.2f", $this->_vtcX->w)." | ".sprintf("%.2f", $this->_vtcY->w)." | ".sprintf("%.2f", $this->_vtcZ->w)." | ".sprintf("%.2f", $this->_vtx0->w)."\n";
+        $res .= "w | ".sprintf("%.2f", $this->_vtcX->w)." | ".sprintf("%.2f", $this->_vtcY->w)." | ".sprintf("%.2f", $this->_vtcZ->w)." | ".sprintf("%.2f", $this->_vtx0->w);
         return $res;
     }
 }

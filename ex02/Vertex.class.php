@@ -17,7 +17,6 @@ Class Vertex {
         $this->_z = $z;
         $this->_w = isset($w) ? $w : 1.0;
         $this->_color = isset($color) ? $color : new Color(['rgb' => 0xffffff]);
-
         if (self::$verbose)
             echo $this." constructed\n";
     }
@@ -28,7 +27,7 @@ Class Vertex {
 
     function __destruct() {
         if (self::$verbose)
-            echo $this." destructed.\n";
+            echo $this." destructed\n";
     }
 
     function __toString() {
