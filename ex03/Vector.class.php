@@ -12,11 +12,11 @@ Class Vector {
     function __construct($params) {
         extract($params);
         if (!isset($orig))
-            $orig = new Vertex(['x' => 0, 'y' => 0, 'z' => 0, 'w' => 1]);
+            $orig = new Vertex(['x' => 0, 'y' => 0, 'z' => 0]);
         $this->_x = $dest->x - $orig->x;
         $this->_y = $dest->y - $orig->y;
         $this->_z = $dest->z - $orig->z;
-        $this->_w = isset($w) ? $w : 0.0;
+        $this->_w = $dest->w - $orig->w;
 
         if (self::$verbose)
             echo $this." constructed\n";
